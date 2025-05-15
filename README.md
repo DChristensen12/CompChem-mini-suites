@@ -1,156 +1,134 @@
 # Computational Chemistry Mini‑Projects Suite
 
-A curated collection of four mini‑projects that showcase core techniques in modern computational chemistry and molecular simulation.  The suite is designed for instructional use and can be tackled sequentially or à la carte.
+A teaching‑oriented collection of **four stand‑alone mini‑projects**—plus a companion *all‑in‑one* Jupyter notebook—for exploring core ideas in quantum chemistry, statistical mechanics, and molecular dynamics.
 
-> **Goal**  Show how quantum mechanics, statistical mechanics, and molecular dynamics work together to predict molecular properties across temperature and phase.
+```
+repo‑root/
+│
+├─ notebook/                  # one‑stop interactive walkthrough
+│   └─ CompChem-mini-suites_DC.ipynb
+│
+├─ project1/                  # Harmonic oscillator code & docs
+├─ project2/                  # Hydrogen molecule HF study
+├─ project3/                  # Path‑integral Monte Carlo
+├─ project4/                  # Lennard‑Jones phase diagram
+│
+└─ environment.yml            # reproducible conda env
+```
+
+Choose your adventure:
+
+1. **Run everything interactively** in the notebook folder, or
+2. **Dive into each project directory** for modular scripts/notebooks, unit tests, and detailed READMEs.
+
+---
+
+## Quick Start
+
+```bash
+# Clone the repo and install dependencies
+$ git clone https://github.com/<your-user>/compchem-mini-suite.git
+$ cd compchem-mini-suite
+$ conda env create -f environment.yml
+$ conda activate compchem-mini
+
+# Option A – launch the master notebook
+$ jupyter lab notebook/CompChem-mini-suites_DC.ipynb
+
+# Option B – run a specific project
+$ cd project2
+$ python hf_solver.py --help  # or open the local notebook
+```
+
+### Software Stack
+
+This suite relies on the **standard scientific‑Python toolkit** (NumPy, SciPy, Matplotlib, etc.) plus a handful of extras for performance and visualisation. *All* exact requirements—including pin‑exact versions—are captured in **`environment.yml`**, so you don’t need to hunt each one down manually.  If you add new packages, just update that file and re‑export.
 
 ---
 
 ## Table of Contents
 
-1. [Getting Started](#getting-started)
-2. [Project 1 – Quantum & Classical Harmonic Oscillators](#project-1)
-3. [Project 2 – Quantum Chemistry of the Hydrogen Molecule](#project-2)
-4. [Project 3 – Path‑Integral Monte Carlo for H₂](#project-3)
-5. [Project 4 – Phase Diagram of Lennard‑Jones Fluids](#project-4)
-6. [Reproducibility & Testing](#reproducibility--testing)
-7. [Citing & Acknowledgements](#citing--acknowledgements)
+*Jump within this README or open the corresponding folder/section.*
+
+| Project                                                | In‑Doc Anchor      | Folder Link              |
+| ------------------------------------------------------ | ------------------ | ------------------------ |
+| Project 1 – Quantum & Classical Harmonic Oscillators   | [jump](#project-1) | [`project1/`](project1/) |
+| Project 2 – Quantum Chemistry of the Hydrogen Molecule | [jump](#project-2) | [`project2/`](project2/) |
+| Project 3 – Path‑Integral Monte Carlo for H₂           | [jump](#project-3) | [`project3/`](project3/) |
+| Project 4 – Phase Diagram of Lennard‑Jones Fluids      | [jump](#project-4) | [`project4/`](project4/) |
 
 ---
 
-## Getting Started
+## Project 1 – Quantum & Classical Harmonic Oscillators  <a id="project-1"></a>
 
-```bash
-# Clone the repository
-$ git clone https://github.com/<your‑user>/compchem-mini-suite.git
-$ cd compchem-mini-suite
+**Folder:** `project1/` · **Notebook section:** *Project 1* (within the master notebook)
 
-# Create & activate a fresh environment (conda or venv)
-$ conda env create -f environment.yml
-$ conda activate compchem-mini
+| Part | File                         | Tasks                                                                                                                                                                                                                                                                                                                  | Key Outputs                                                                         |
+| ---- | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| 1‑1  | `1-1_dimensionless.ipynb`    | Derive a dimensionless Hamiltonian $\hat H = \tfrac12(p^2 + \xi^2)$.                                                                                                                                                                                                                                                   | Markdown derivation, symbolic check.                                                |
+| 1‑2  | `qm_harmonic.py`             | Solve the time‑independent Schrödinger equation for the dimensionless Hamiltonian using a finite basis; **report the three lowest eigenvalues**, plot their probability densities $\lvert\psi_n(\xi)\rvert^2$, and, from those states, compute the Bose–Einstein average energy $⟨E(T)⟩$ over a range of temperatures. | Table/CSV of eigenvalues; PNG/PDF wave‑function plots; energy‑vs‑temperature curve. |
+| 1‑3  | `md_ho.py`                   | Velocity‑Verlet MD (a.u., γ = 0.5); Langevin thermostat; block averages & error bars.                                                                                                                                                                                                                                  | Energies vs T; heat‑capacity plot; position PDF.                                    |
+| 1‑4  | `compare_qm_classical.ipynb` | Overlay quantum vs classical $⟨E$ and $C_V$.                                                                                                                                                                                                                                                                           | Combined figure with commentary.                                                    |
 
-# Run notebooks/examples
-$ jupyter lab
-```
-
-**Dependencies**
-
-* Python ≥ 3.11
-* `numpy`, `scipy`, `sympy`, `matplotlib`, `pandas`
-* `numba` (JIT acceleration)
-* `ase` (optional—atomic visualization)
-* `pytest` (unit tests)
-
-The *environment.yml* file pins exact versions to guarantee identical results on any machine.
+*Highlights:* SymPy for algebra, `numba` for MD inner loop, on‑the‑fly autocorrelation to choose block length.
 
 ---
 
-## Project 1 – Quantum & Classical Harmonic Oscillators  <a id="project-1"></a>
+## Project 2 – Quantum Chemistry of the Hydrogen Molecule  <a id="project-2"></a>
 
-> *Comparative Study of Quantum and Classical Harmonic Oscillators*
+**Folder:** `project2/` · **Notebook section:** *Project 2*
 
-Directory: **`project1/`**
-
-| Part | Notebook / Script            | What You Do                                                                                                                                                      | Key Outputs                                                        |              |                                    |
-| ---- | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ | ------------ | ---------------------------------- |
-| 1‑1  | `1‑1_dimensionless.ipynb`    | Derive a dimension‑less Hamiltonian by scaling $x \to \xi = x/x_0$.                                                                                              | Closed‑form expression for $ \hat H = \tfrac12 (p^2 + \xi^2)$.     |              |                                    |
-| 1‑2  | `qm_harmonic.py`             | Build a finite basis of HO eigenfunctions, diagonalise with `scipy.linalg.eigh`, compute first three energies, and evaluate Bose–Einstein averages.              | Table of eigenvalues; plots of (                                   | \psi\_n(\xi) | ^2); $\langle E(T)\rangle$ vs *T*. |
-| 1‑3  | `md_ho.py`                   | Classical MD via velocity Verlet + Langevin thermostat.  Uses atomic units ($m = \omega = 1$).  Block averaging gives energies, heat capacities, and error bars. | `results/ho_md_*` CSV files; PDF plots of energy & position PDFs.  |              |                                    |
-| 1‑4  | `compare_qm_classical.ipynb` | Cross‑compare $\langle E\rangle$ and $C_V$ from Parts 1‑2 & 1‑3; comment on equipartition breakdown.                                                             | Combined plot highlighting quantum/classical disparity at low *T*. |              |                                    |
-
-**Implementation Highlights**
-
-* **Symbolic Derivation** (Part 1‑1) uses SymPy to keep algebra transparent.
-* **Basis Truncation** (Part 1‑2) exposes convergence; you can tune `N_basis` in the config block.
-* **Thermostat Choice** (Part 1‑3) defaults to Langevin (γ = 0.5), but any Nose–Hoover chain can be plugged in.
-* **Error Bars** handled via block‑averaging; block length chosen from the autocorrelation time estimated on the fly.
+| Part | File                  | Description                                                                               |
+| ---- | --------------------- | ----------------------------------------------------------------------------------------- |
+| 2‑1  | `hf_solver.py`        | Restricted Hartree–Fock with STO‑3G & STO‑4G; integral engine uses Obara–Saika; DIIS SCF. |
+| 2‑2  | `hf_optim.ipynb`      | Profile naïve integrals, accelerate with `numba` & BLAS; timing comparison.               |
+| 2‑3  | `pes_scan.py`         | Sweep H–H distance, plot PES, extract $R_e$ & $D_e$.                                      |
+| 2‑4  | `potential_fit.ipynb` | Fit Morse & Lennard‑Jones potentials; discuss discrepancies & improvement ideas.          |
 
 ---
 
-## Project 2 – Quantum Chemistry of the Hydrogen Molecule  <a id="project-2"></a>
+## Project 3 – Path‑Integral Monte Carlo for H₂  <a id="project-3"></a>
 
-> *Quantum Mechanical Investigation of the H₂ Covalent Bond*
+**Folder:** `project3/` · **Notebook section:** *Project 3*
 
-Directory: **`project2/`**
-
-| Part | Notebook / Script     | Core Tasks                                                                                                                                                                      | Deliverables                                      |
-| ---- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
-| 2‑1  | `hf_solver.py`        | Build a *restricted* Hartree–Fock code from scratch.  Integral engine uses Obara–Saika recurrence; STO‑3G & STO‑4G parameters fetched at runtime from Basis‑Set‑Exchange API.   | Converged SCF energies at multiple bond lengths.  |
-| 2‑2  | `hf_optim.ipynb`      | Profile the naive integrals (`cProfile`), then accelerate with `numba` & BLAS.                                                                                                  | Bar chart of speedups; timing table (old vs new). |
-| 2‑3  | `pes_scan.py`         | Sweep 1.0–3.0 Å (≤ 0.05 Å spacing), record total energy.  `plot_pes.ipynb` plots the curve and extracts $R_e$ & dissociation energy with `scipy.optimize.curve_fit`.            | PNG of PES; printed $R_e$ and $D_e$.              |
-| 2‑4  | `potential_fit.ipynb` | Fit Morse & Lennard‑Jones to the ab‑initio energies.  Uses Levenberg–Marquardt and reports $\chi^2$.  Discuss discrepancies and propose multi‑body or perturbative corrections. | Overlaid PES plot + fit parameters table.         |
-
-**Implementation Highlights**
-
-* **Integral Caching** To avoid $O(N^4)$ recomputation, integrals are stored in HDF5.
-* **DIIS Acceleration** ensures robust SCF convergence (<15 cycles typical).
-* **Vectorised Scan** Bond distances are distributed to CPUs via `multiprocessing.Pool`.
+| Part | File                  | Focus                                                             |
+| ---- | --------------------- | ----------------------------------------------------------------- |
+| 3‑1  | `virial_estimator.md` | Derivation of Virial energy estimator for Morse potential.        |
+| 3‑2  | `pimc_core.py`        | Ring‑polymer PIMC; single‑bead moves; periodic box (L = 10 a.u.). |
+| 3‑3  | *same*                | Add whole‑polymer translation moves; improved convergence.        |
+| 3‑4  | `analysis.ipynb`      | Runs at 1000 K & 2000 K; energy & radial PDF with error bars.     |
 
 ---
 
-## Project 3 – Path‑Integral Monte Carlo for H₂  <a id="project-3"></a>
+## Project 4 – Phase Diagram of Lennard‑Jones Fluids  <a id="project-4"></a>
 
-> *Finite‑Temperature Quantum Statistics with Ring‑Polymer Mapping*
+**Folder:** `project4/` · **Notebook section:** *Project 4*
 
-Directory: **`project3/`**
-
-| Part | File                             | Focus                                                                                                                                                                  | Output                                               |
-| ---- | -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
-| 3‑1  | `virial_estimator.md`            | Paper‑style derivation of the Virial energy estimator for a Morse potential.                                                                                           | Markdown document with equation derivations.         |
-| 3‑2  | `pimc_core.py`                   | PIMC engine: `RingPolymer` class, periodic box (L = 10 a.u.), Morse potential, single‑bead Metropolis moves.                                                           | Trajectory `.npz`; log of acceptance ratios.         |
-| 3‑3  | `pimc_core.py` (module extended) | Collective whole‑polymer translations; acceptance calculated from action difference.                                                                                   | Updated acceptance stats; faster energy convergence. |
-| 3‑4  | `analysis.ipynb`                 | Runs at 1000 K & 2000 K; chooses step size to target 30 % acceptance.  Uses blocking to compute $\langle E \rangle\pm\sigma$.  Computes radial PDF P(r) via histogram. | Energy vs T table; P(r) plots for both temps.        |
-
-**Implementation Highlights**
-
-* **Autotuned Step Size** First 5 × 10³ moves adapt Δ to hit desired acceptance, then freeze.
-* **Periodic Images** Minimum‑image convention wrapped in `vectorized_distance()` for speed.
-* **Blocking & Jackknife** Used for error bars on mean energy and histogram counts.
+| Part | File                                   | Objective                                                     |
+| ---- | -------------------------------------- | ------------------------------------------------------------- |
+| 4‑1  | `lj_system.py`                         | Cell‑list LJ potential (cutoff 3σ); periodic images.          |
+| 4‑2  | `integrators.py`                       | Velocity‑Verlet (Δt⋆ = 1 × 10⁻³) in reduced units.            |
+| 4‑3  | `thermostat.py`, `equilibration.ipynb` | Nosé–Hoover chain; equilibrate at ρσ³ = 0.6, T⋆ = 1.5.        |
+| 4‑4  | `phase_scan.py`                        | Grid of (T⋆, ρσ³) points; identify phase via RDF.             |
+| 4‑5  | `analysis_phase_boundary.md`           | Discuss hysteresis & enhanced sampling for solid–liquid line. |
+| 4‑6  | `diffusion.py`                         | Diffusion coefficients from MSD & VACF at two densities.      |
 
 ---
 
-## Project 4 – Phase Diagram of Lennard‑Jones Fluids  <a id="project-4"></a>
+## Reproducibility & Testing
 
-> *Mapping Phase Behaviour and Transport in a Simple Fluid Model*
-
-Directory: **`project4/`**
-
-| Part | Script                                 | Objective                                                                                                           | Artifacts                                   |
-| ---- | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
-| 4‑1  | `lj_system.py`                         | Base `LJSystem` class with cell‑list neighbour search (cutoff = 3σ).                                                | Module ready for import by later parts.     |
-| 4‑2  | `integrators.py`                       | Velocity‑Verlet in reduced units (Δt⋆ = 1e‑3).                                                                      | Verified energy drift < 10⁻⁴ ε per 10 τ.    |
-| 4‑3  | `thermostat.py`, `equilibration.ipynb` | Nosé–Hoover chain thermostat; run at ρσ³ = 0.6, T⋆ = 1.5 for 10 τ.                                                  | Plot of E\_kin, E\_pot, E\_tot stabilising. |
-| 4‑4  | `phase_scan.py`                        | Grid of (T⋆, ρσ³) points (table in spec).  Runs 20 τ starting from FCC & liquid.  Computes RDF `g(r)` for phase ID. | `phase_map.csv`; RDF plots.                 |
-| 4‑5  | `analysis_phase_boundary.md`           | Discuss hysteresis, propose interface‑pinning & thermodynamic integration strategy.                                 | Markdown report.                            |
-| 4‑6  | `diffusion.py`                         | Computes D from MSD (Einstein) and VACF (Green–Kubo) at ρσ³ = 0.1, 0.6.                                             | Table & plot of D vs ρ.                     |
-
-**Implementation Highlights**
-
-* **Cell Lists** `numba`‑accelerated double loop gives $O(N)$ force evaluation.
-* **Structure Factor** `scipy.fft` option to characterise long‑range order (liquid vs solid).
-* **Diffusion Analysis** Linear regression on MSD after ballistic regime; VACF integrated with trapezoidal rule.
+Each directory ships with unit tests (`pytest`) that verify forces, energy conservation, and SCF convergence. GitHub Actions CI runs both the stand‑alone scripts and the master notebook in headless mode to catch regressions early.
 
 ---
 
-## Reproducibility & Testing  <a id="reproducibility--testing"></a>
+## License
 
-```bash
-# Run end‑to‑end test suite
-$ pytest -q
-```
-
-Each project folder contains *unit* tests (e.g., force consistency, energy conservation) and *regression* tests comparing against stored reference data.
-
-CI is configured via GitHub Actions (see `.github/workflows/ci.yml`).  Every push runs the notebooks in headless mode and uploads artifacts.
+**No explicit license has been chosen yet.** Until a LICENSE file is added, all rights are reserved by the author. If you would like to reuse or adapt this material, please open an issue or contact the repository owner to discuss licensing terms.
 
 ---
 
-## Citing & Acknowledgements  <a id="citing--acknowledgements"></a>
+## Citation
 
-Please cite this repository as:
+> Christensen, D.; **Computational Chemistry Mini‑Projects Suite**, 2025.
 
-```
-Christensen, Daniel; *Computational Chemistry Mini‑Projects Suite*, 2025
-```
-
-Special thanks to *Basis Set Exchange* for open access to basis‑set parameters and to the open‑source community for `numpy`, `scipy`, and `numba`.
+If you employ this material in teaching or research, please cite the repository. Thanks to the open‑source community whose tools make this work possible.
